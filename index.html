@@ -1,17 +1,290 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Lovebug Tic-Tac-Toe ♡</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>lovebug tic-tac-toe ♡</title>
 <style>
-:root{--pink:#ff8fbd;--deep:#9e3268;--cream:#fff8fb;--ink:#592943}*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:20px;background:radial-gradient(circle at 15% 15%,#ffe1ef,transparent 32%),radial-gradient(circle at 90% 85%,#e8ddff,transparent 35%),#fff5fa;color:var(--ink);font-family:ui-rounded,"Trebuchet MS",system-ui,sans-serif}.game{width:min(100%,430px);background:#ffffffd9;border:2px solid #ffd0e3;border-radius:28px;padding:25px;box-shadow:0 18px 55px #b94e8220;text-align:center}h1{margin:0;font-size:clamp(27px,7vw,36px);color:var(--deep)}.subtitle{margin:7px 0 20px;color:#a86688}.score{display:flex;justify-content:space-around;gap:10px;margin-bottom:17px}.score div{background:#fff0f7;border:1px solid #ffd2e5;border-radius:15px;padding:10px;flex:1}.score strong{display:block;font-size:23px}.status{font-weight:700;min-height:28px;margin:15px 0}.board{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.cell{aspect-ratio:1;border:0;border-radius:18px;background:#fff0f7;box-shadow:inset 0 0 0 2px #ffd0e3;color:var(--deep);font-size:clamp(38px,12vw,58px);font-weight:800;cursor:pointer;transition:transform .12s,background .12s}.cell:hover:enabled{transform:translateY(-2px);background:#ffe2ef}.cell:focus-visible,button:focus-visible{outline:3px solid #a85bff;outline-offset:3px}.cell:disabled{cursor:default}.actions{display:flex;gap:10px;margin-top:18px}.actions button{flex:1;padding:12px 10px;border:0;border-radius:14px;background:#f8c3dc;color:#77264f;font-weight:800;font-size:14px;cursor:pointer}.actions button.primary{background:var(--pink);color:#fff}.foot{font-size:12px;color:#b27b99;margin:18px 0 0}.win{background:#ffe0ed!important;box-shadow:inset 0 0 0 3px #ff8fbd}
+:root{--pink:#d88fac;--pink-dark:#a75e80;--lavender:#9b9bd0;--text:#705464;--border:#f0d9e2;--paper:#fff8fa}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;padding:22px 14px;background:linear-gradient(145deg,#fff5f8,#f9f4ff 55%,#fff8ee);font-family:ui-rounded,"Trebuchet MS",system-ui,sans-serif;color:var(--text);display:flex;justify-content:center;align-items:flex-start}
+.game{width:min(100%,540px);background:var(--paper);border:1px solid var(--border);border-radius:24px;padding:clamp(15px,4vw,24px);box-shadow:0 12px 35px #a76d8712}
+.top{text-align:center;padding:5px 0 17px}.decor{font-size:24px;letter-spacing:6px;color:var(--pink)}h1{font-size:clamp(27px,6vw,36px);font-weight:850;letter-spacing:-1px;margin:5px 0;color:var(--pink-dark)}.subtitle{font-size:13px;color:#ad8a9b}
+.panel{background:#fff;border:1px solid var(--border);border-radius:17px;padding:14px;margin-bottom:14px}
+.label{font-size:12px;font-weight:800;display:block;margin-bottom:7px;color:#9f6c84}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+input{font:inherit;min-width:0;flex:1;border:1px solid #e9cbd8;border-radius:12px;padding:11px 12px;color:var(--text);background:#fff9fb}
+button{font:inherit;cursor:pointer;touch-action:manipulation}
+.btn{border:1px solid #ebcad7;border-radius:13px;padding:10px 14px;min-height:44px;background:white;color:#946780;font-weight:750}.btn.main{background:var(--pink);color:white;border-color:var(--pink)}.btn:disabled{opacity:.5;cursor:not-allowed}button:focus-visible,input:focus-visible{outline:3px solid #b97cdb;outline-offset:2px}
+.roomline{font-size:13px;overflow-wrap:anywhere;line-height:1.6}.roomcode{font-size:22px;letter-spacing:3px;font-weight:900;color:var(--pink-dark)}
+.scores{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}.player{border:1px solid #eedbe3;border-radius:16px;padding:12px;text-align:center;background:#fff}.player.active{border:2px solid var(--pink);background:#fff0f5;padding:11px}.mark{font-size:27px;font-weight:850;color:#c8789a;line-height:1.3}.mark.o{color:var(--lavender)}.pname{font-size:12px;font-weight:750}.pts{font-size:22px;font-weight:850;color:#9f6c84}
+.board{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;max-width:390px;margin:0 auto}.cell{aspect-ratio:1;border:1px solid #f0d5df;border-radius:17px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:clamp(38px,11vw,58px);font-weight:850;color:#d07fa0;min-width:0;padding:0;transition:background .15s,transform .15s}.cell.o{color:var(--lavender)}.cell:disabled{cursor:default;opacity:1}.cell.win{background:#fce0eb;border-color:var(--pink);animation:pop .35s ease}.cell.empty{color:#f1dce5}@keyframes pop{50%{transform:scale(1.05)}}
+.status{text-align:center;font-weight:750;font-size:15px;min-height:27px;margin:14px 0 10px;color:#9b6881}.actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.confetti{text-align:center;font-size:19px;letter-spacing:5px;color:var(--pink);margin-top:10px;min-height:22px}.note{text-align:center;font-size:11px;color:#b398a5;margin-top:12px}.hint{text-align:center;font-size:12px;color:#a58b9a;margin-top:8px;line-height:1.5}
+@media(max-width:360px){.game{padding:12px}.board{gap:6px}.cell{border-radius:13px}.btn{padding:9px 11px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
-<body><main class="game"><h1>Lovebug Tic-Tac-Toe ♡</h1><p class="subtitle">a tiny game for two lovebugs</p><section class="score" aria-label="Score"><div>🌸 Player X<strong id="scoreX">0</strong></div><div>🦋 Draws<strong id="scoreD">0</strong></div><div>💗 Player O<strong id="scoreO">0</strong></div></section><div class="status" id="status" aria-live="polite">Player X's turn ✨</div><div class="board" id="board" role="group" aria-label="Tic tac toe board"></div><div class="actions"><button class="primary" id="again">Play again ↻</button><button id="reset">Reset scores ♡</button></div><p class="foot">made with love, just for fun ✿</p></main>
+<body>
+<main class="game" id="lovebug">
+  <header class="top">
+    <div class="decor" aria-hidden="true">♡ ˚₊‧꒰ა ☆ ໒꒱ ‧₊˚ ♡</div>
+    <h1>lovebug tic-tac-toe</h1>
+    <div class="subtitle">a tiny game for two little lovebugs</div>
+  </header>
+
+  <section class="panel">
+    <label class="label" for="roomInput">online room code</label>
+    <div class="row">
+      <button class="btn main" id="createBtn" type="button">♡ create room</button>
+      <input id="roomInput" maxlength="6" placeholder="enter code" autocomplete="off" aria-label="room code">
+      <button class="btn" id="joinBtn" type="button">join ♡</button>
+    </div>
+    <div class="roomline" id="roomInfo" style="margin-top:10px">create a room and share its code with a friend</div>
+    <div class="roomline" id="connectionInfo" style="margin-top:5px">connecting to firebase…</div>
+  </section>
+
+  <section class="scores" aria-label="scores">
+    <div class="player active" id="px"><div class="mark">♡ X</div><div class="pname" id="xname">player X</div><div class="pts" id="xs">0</div></div>
+    <div class="player" id="po"><div class="mark o">♡ O</div><div class="pname" id="oname">player O</div><div class="pts" id="os">0</div></div>
+  </section>
+  <div class="board" id="board" role="group" aria-label="tic tac toe board"></div>
+  <div class="status" id="status" aria-live="polite">create a room to begin ♡</div>
+  <div class="actions">
+    <button class="btn main" id="newBtn" type="button" disabled>↻ new round</button>
+    <button class="btn" id="leaveBtn" type="button" disabled>leave room</button>
+    <button class="btn" id="soundBtn" type="button" aria-pressed="false">♫ sound off</button>
+  </div>
+  <div class="confetti" id="confetti" aria-hidden="true">✧ ˚ · . ✧</div>
+  <div class="note">made with sugar, sparkles &amp; a little bit of love</div>
+  <div class="hint">online multiplayer · both players need this website open · share the room code, not your firebase settings</div>
+</main>
+
+<!-- Firebase's browser SDK. This page uses the compat version so it works as a plain index.html file. -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script>
-const boardEl=document.getElementById('board'),statusEl=document.getElementById('status');let cells=Array(9).fill(''),turn='X',done=false,scores={X:0,O:0,D:0};const wins=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];let buttons=[];
-function render(){boardEl.innerHTML='';buttons=[];cells.forEach((v,i)=>{const b=document.createElement('button');b.className='cell';b.type='button';b.setAttribute('aria-label',`Cell ${i+1}${v?', '+v:''}`);b.textContent=v?(v==='X'?'♡':'✿'):'';b.disabled=!!v||done;b.addEventListener('click',()=>play(i));boardEl.appendChild(b);buttons.push(b)});document.getElementById('scoreX').textContent=scores.X;document.getElementById('scoreO').textContent=scores.O;document.getElementById('scoreD').textContent=scores.D}
-function play(i){if(done||cells[i])return;cells[i]=turn;const line=wins.find(w=>w.every(n=>cells[n]===turn));if(line){done=true;scores[turn]++;statusEl.textContent=`Player ${turn} wins! 💖`;line.forEach(n=>buttons[n]?.classList.add('win'));}else if(cells.every(Boolean)){done=true;scores.D++;statusEl.textContent="It's a draw! Sending hugs ♡";}else{turn=turn==='X'?'O':'X';statusEl.textContent=`Player ${turn}'s turn ✨`;}render();if(line)line.forEach(n=>buttons[n].classList.add('win'));}
-function next(){cells=Array(9).fill('');turn='X';done=false;statusEl.textContent="Player X's turn ✨";render()}
-document.getElementById('again').addEventListener('click',next);document.getElementById('reset').addEventListener('click',()=>{scores={X:0,O:0,D:0};next()});render();
-</script></body></html>
+(() => {
+  const $ = id => document.getElementById(id);
+  const firebaseConfig = {
+    apiKey: "AIzaSyA-vlR4ydb46TSM6jkNeEDAaBHCTiawmqQ",
+    authDomain: "bris-lovebug-tictactoe.firebaseapp.com",
+    databaseURL: "https://bris-lovebug-tictactoe-default-rtdb.firebaseio.com",
+    projectId: "bris-lovebug-tictactoe",
+    storageBucket: "bris-lovebug-tictactoe.firebasestorage.app",
+    messagingSenderId: "1054025383666",
+    appId: "1:1054025383666:web:1bcdeae83895954c401a6b"
+  };
+
+  let app, auth, db, user = null, roomRef = null, roomCode = "", roomData = null;
+  let myMark = "", sound = false, audio = null, roomListener = null, busy = false;
+  const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+
+  function setConnection(text) { $("connectionInfo").textContent = text; }
+  function beep(freq=600) {
+    if (!sound) return;
+    try {
+      audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+      if (audio.state === "suspended") audio.resume();
+      const osc = audio.createOscillator(), gain = audio.createGain();
+      osc.type = "sine"; osc.frequency.value = freq; gain.gain.value = .04;
+      osc.connect(gain); gain.connect(audio.destination); osc.start();
+      gain.gain.exponentialRampToValueAtTime(.001, audio.currentTime + .13);
+      osc.stop(audio.currentTime + .14);
+    } catch (_) {}
+  }
+  function getWinner(board) {
+    for (const line of lines) if (board[line[0]] && board[line[0]] === board[line[1]] && board[line[1]] === board[line[2]]) return {mark:board[line[0]], line};
+    return null;
+  }
+  function safeRoomCode() { return Math.random().toString(36).slice(2,8).toUpperCase(); }
+  function myPlayer() { return roomData && roomData.players && user ? roomData.players[user.uid] : null; }
+
+  function render() {
+    const data = roomData;
+    const board = data && Array.isArray(data.board) ? data.board : Array(9).fill("");
+    const turn = data ? data.turn : "X";
+    const winner = data ? data.winner : "";
+    const tie = data ? !!data.tie : false;
+    const winLine = data && Array.isArray(data.winLine) ? data.winLine : [];
+    const players = data && data.players ? data.players : {};
+    $("board").innerHTML = "";
+    board.forEach((value, i) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "cell" + (value === "O" ? " o" : "") + (winLine.includes(i) ? " win" : "");
+      if (!value) button.classList.add("empty");
+      button.textContent = value ? (value === "X" ? "×" : "○") : ["♡","✿","☆","♡","✧","♡","✿","♡","☆"][i];
+      button.setAttribute("aria-label", "square " + (i+1) + (value ? ", " + value : ", empty"));
+      button.disabled = !data || !myMark || !!winner || tie || turn !== myMark || !!value || Object.keys(players).length < 2 || busy;
+      button.addEventListener("click", () => makeMove(i));
+      $("board").appendChild(button);
+    });
+    $("xs").textContent = data && data.scores ? (data.scores.X || 0) : 0;
+    $("os").textContent = data && data.scores ? (data.scores.O || 0) : 0;
+    $("px").classList.toggle("active", !!data && !winner && !tie && turn === "X");
+    $("po").classList.toggle("active", !!data && !winner && !tie && turn === "O");
+    const playerCount = Object.keys(players).length;
+    $("xname").textContent = playersByMark("X") || "player X";
+    $("oname").textContent = playersByMark("O") || "player O";
+    $("newBtn").disabled = !data || playerCount < 2 || !myMark || busy;
+    $("leaveBtn").disabled = !roomRef;
+    if (!data) $("status").textContent = "create a room to begin ♡";
+    else if (playerCount < 2) $("status").textContent = "waiting for a friend to join… ♡";
+    else if (winner) $("status").textContent = (playersByMark(winner) || ("player " + winner)) + " wins! ♡";
+    else if (tie) $("status").textContent = "it’s a tie! still full of love ♡";
+    else $("status").textContent = (turn === myMark ? "your turn" : (playersByMark(turn) || ("player " + turn)) + "’s turn") + " " + (turn === myMark ? "♡" : "✧");
+    $("confetti").textContent = winner ? "♡ ✧ 🎀 ✧ ♡" : (tie ? "♡ ✧ ♡ ✧ ♡" : "✧ ˚ · . ✧");
+    if (roomCode) {
+      $("roomInfo").innerHTML = 'room code: <span class="roomcode">' + roomCode + '</span> · you are <b>' + (myMark || "?") + '</b><br>share this code with your friend';
+    }
+  }
+  function playersByMark(mark) {
+    if (!roomData || !roomData.players) return "";
+    const entry = Object.entries(roomData.players).find(([,p]) => p && p.mark === mark);
+    return entry && entry[1].name ? entry[1].name : "";
+  }
+  function detachRoom() {
+    if (roomRef && roomListener) roomRef.off("value", roomListener);
+    roomRef = null; roomListener = null; roomCode = ""; roomData = null; myMark = "";
+    $("roomInfo").textContent = "create a room and share its code with a friend";
+    render();
+  }
+  async function attachRoom(code) {
+    detachRoom();
+    roomCode = code;
+    roomRef = db.ref("rooms/" + code);
+    roomListener = snap => {
+      roomData = snap.val();
+      if (!roomData) {
+        setConnection("that room no longer exists");
+        detachRoom();
+        return;
+      }
+      myMark = roomData.players && roomData.players[user.uid] ? roomData.players[user.uid].mark : "";
+      setConnection(myMark ? "connected ♡" : "this account isn't a player in this room");
+      render();
+    };
+    roomRef.on("value", roomListener, err => setConnection("database error: " + err.message));
+  }
+  async function createRoom() {
+    if (!user || busy) return;
+    busy = true; render();
+    try {
+      let code, ref, exists = true;
+      for (let tries=0; tries<5 && exists; tries++) {
+        code = safeRoomCode(); ref = db.ref("rooms/" + code);
+        const snap = await ref.once("value"); exists = snap.exists();
+      }
+      if (exists) throw new Error("couldn't find an unused room code; please try again");
+      await ref.set({
+        board: Array(9).fill(""), turn: "X", winner: "", tie: false, winLine: [],
+        scores: {X:0,O:0},
+        players: {[user.uid]: {mark:"X", name:"player X"}},
+        createdAt: firebase.database.ServerValue.TIMESTAMP
+      });
+      await attachRoom(code);
+      $("roomInput").value = code;
+      setConnection("room created — waiting for your friend ♡");
+    } catch (e) {
+      setConnection("couldn't create room: " + e.message);
+    } finally { busy = false; render(); }
+  }
+  async function joinRoom() {
+    if (!user || busy) return;
+    const code = $("roomInput").value.trim().toUpperCase().replace(/[^A-Z0-9]/g,"");
+    if (code.length !== 6) { setConnection("enter the 6-character room code"); return; }
+    busy = true; render();
+    try {
+      const ref = db.ref("rooms/" + code);
+      let joinedMark = "";
+      const result = await ref.transaction(current => {
+        if (!current || !current.players) return;
+        if (current.players[user.uid]) { joinedMark = current.players[user.uid].mark; return current; }
+        const playerEntries = Object.entries(current.players).filter(([,p]) => p);
+        if (playerEntries.length >= 2) return;
+        joinedMark = "O";
+        current.players[user.uid] = {mark:"O", name:"player O"};
+        return current;
+      }, undefined, false);
+      if (!result.committed || !joinedMark) throw new Error("room not found or already has two players");
+      await attachRoom(code);
+      setConnection("joined room ♡");
+    } catch (e) {
+      setConnection("couldn't join: " + e.message);
+    } finally { busy = false; render(); }
+  }
+  async function makeMove(index) {
+    if (!roomRef || !roomData || busy || !myMark) return;
+    busy = true; render();
+    try {
+      const ref = roomRef;
+      const result = await ref.transaction(current => {
+        if (!current || !current.players || !current.players[user.uid]) return;
+        if (Object.keys(current.players).length < 2 || current.winner || current.tie || current.turn !== myMark || current.board[index]) return;
+        const board = current.board.slice();
+        board[index] = myMark;
+        const found = getWinner(board);
+        current.board = board;
+        if (found) {
+          current.winner = found.mark;
+          current.winLine = found.line;
+          current.scores = current.scores || {X:0,O:0};
+          current.scores[found.mark] = (current.scores[found.mark] || 0) + 1;
+        } else if (board.every(Boolean)) {
+          current.tie = true;
+        } else {
+          current.turn = myMark === "X" ? "O" : "X";
+        }
+        return current;
+      }, undefined, false);
+      if (result.committed) beep(myMark === "X" ? 660 : 500);
+    } catch (e) { setConnection("move failed: " + e.message); }
+    finally { busy = false; render(); }
+  }
+  async function newRound() {
+    if (!roomRef || !roomData || busy || !myMark || Object.keys(roomData.players || {}).length < 2) return;
+    busy = true; render();
+    try {
+      await roomRef.transaction(current => {
+        if (!current || !current.players || !current.players[user.uid]) return;
+        current.board = Array(9).fill("");
+        current.turn = "X"; current.winner = ""; current.tie = false; current.winLine = [];
+        return current;
+      }, undefined, false);
+    } catch (e) { setConnection("couldn't start new round: " + e.message); }
+    finally { busy = false; render(); }
+  }
+
+  $("createBtn").addEventListener("click", createRoom);
+  $("joinBtn").addEventListener("click", joinRoom);
+  $("roomInput").addEventListener("keydown", e => { if (e.key === "Enter") joinRoom(); });
+  $("newBtn").addEventListener("click", newRound);
+  $("leaveBtn").addEventListener("click", () => { detachRoom(); setConnection("you left the room"); });
+  $("soundBtn").addEventListener("click", () => {
+    sound = !sound; $("soundBtn").textContent = sound ? "♫ sound on" : "♫ sound off";
+    $("soundBtn").setAttribute("aria-pressed", String(sound)); beep(700);
+  });
+
+  render();
+  if (typeof firebase === "undefined") {
+    setConnection("couldn't load firebase — check your internet connection");
+    return;
+  }
+  try {
+    if (firebaseConfig.apiKey.startsWith("PASTE_") || firebaseConfig.messagingSenderId.startsWith("PASTE_") || firebaseConfig.appId.startsWith("PASTE_")) {
+      setConnection("one setup step left: paste your Firebase web config into index.html");
+    } else {
+      app = firebase.initializeApp(firebaseConfig);
+      auth = firebase.auth(); db = firebase.database();
+      auth.signInAnonymously().then(cred => {
+        user = cred.user;
+        setConnection("connected to firebase ♡");
+        $("createBtn").disabled = false; $("joinBtn").disabled = false;
+      }).catch(err => setConnection("sign-in failed: " + err.message));
+    }
+  } catch (e) { setConnection("firebase setup error: " + e.message); }
+})();
+</script>
+</body>
+</html>
