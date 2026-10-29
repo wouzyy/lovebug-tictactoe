@@ -69,7 +69,7 @@ button{font:inherit;cursor:pointer;touch-action:manipulation}
   const firebaseConfig = {
     apiKey: "AIzaSyA-vlR4ydb46TSM6jkNeEDAaBHCTiawmqQ",
     authDomain: "bris-lovebug-tictactoe.firebaseapp.com",
-    databaseURL: "https://bris-lovebug-tictactoe-default-rtdb.firebaseio.com",
+    databaseURL: "https://bris-lovebug-tictactoe-default-rtdb.firebaseio.com/",
     projectId: "bris-lovebug-tictactoe",
     storageBucket: "bris-lovebug-tictactoe.firebasestorage.app",
     messagingSenderId: "1054025383666",
@@ -197,17 +197,31 @@ button{font:inherit;cursor:pointer;touch-action:manipulation}
     busy = true; render();
     try {
       const ref = db.ref("rooms/" + code);
-      let joinedMark = "";
+      // Read the room first so the transaction has the existing room data locally.
+      const initialSnap = await ref.once("value");
+      if (!initialSnap.exists()) throw new Error("room not found — check the code");
+      const initialRoom = initialSnap.val();
+      if (!initialRoom || !initialRoom.players) throw new Error("this room has invalid player data");
+      if (!initialRoom.players[user.uid] && Object.values(initialRoom.players).filter(Boolean).length >= 2) {
+        throw new Error("this room already has two players");
+      }
       const result = await ref.transaction(current => {
         if (!current || !current.players) return;
-        if (current.players[user.uid]) { joinedMark = current.players[user.uid].mark; return current; }
-        const playerEntries = Object.entries(current.players).filter(([,p]) => p);
+        if (current.players[user.uid]) return current;
+        const playerEntries = Object.values(current.players).filter(Boolean);
         if (playerEntries.length >= 2) return;
-        joinedMark = "O";
-        current.players[user.uid] = {mark:"O", name:"player O"};
-        return current;
+        return {
+          ...current,
+          players: {
+            ...current.players,
+            [user.uid]: {mark:"O", name:"player O"}
+          }
+        };
       }, undefined, false);
-      if (!result.committed || !joinedMark) throw new Error("room not found or already has two players");
+      const finalRoom = result.snapshot && result.snapshot.val();
+      const joinedPlayer = finalRoom && finalRoom.players && finalRoom.players[user.uid];
+      if (!result.committed && !joinedPlayer) throw new Error("couldn't join room — try creating a fresh room code");
+      if (!joinedPlayer) throw new Error("room is full or the code is incorrect");
       await attachRoom(code);
       setConnection("joined room ♡");
     } catch (e) {
@@ -272,7 +286,7 @@ button{font:inherit;cursor:pointer;touch-action:manipulation}
     return;
   }
   try {
-    if (firebaseConfig.apiKey.startsWith("PASTE_") || firebaseConfig.messagingSenderId.startsWith("PASTE_") || firebaseConfig.appId.startsWith("PASTE_")) {
+    if (firebaseConfig.apiKey.startsWith("AIzaSyA-vlR4ydb46TSM6jkNeEDAaBHCTiawmqQ") || firebaseConfig.messagingSenderId.startsWith("1054025383666") || firebaseConfig.appId.startsWith("1:1054025383666:web:1bcdeae83895954c401a6b")) {
       setConnection("one setup step left: paste your Firebase web config into index.html");
     } else {
       app = firebase.initializeApp(firebaseConfig);
